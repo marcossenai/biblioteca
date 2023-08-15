@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .carrossel {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Cadastro de livros</h1>
+    <p class="aviso-limite" style="text-align:center; color: #d53f8c;">Atenção: Você pode adicionar até um limite de 7
+        livros.</p>
+
+
+    <div class="cont">
+        <input id="nomeLivro" placeholder="Nome" type="text">
+        <input id="autorLivro" placeholder="Autor" type="text">
+        <input id="anoLivro" placeholder="Ano" type="number">
+        <button onclick="adicionar()">Adicionar Livro</button>
+        <button onclick="mostrarLivros()">Mostrar</button>
+        <button onclick="apagarLivros()">Deletar</button>
+    </div>
+
+
+    <p id="quantidadeLivros"></p>
+    <p id="textoCadastro"></p>
+
+    <div class="carrossel">
+        <img class="img" id="carrosselImagem" src="" alt="Imagem do Carrossel">
+        <p id="carrosselTexto"></p>
+        <div class="botoes">
+            <button class="bot" id="anterior"><</button>
+                    <button class="bot" id="proximo">></button>
+        </div>
+    </div>
+
+    <script>
+
+        let biblioteca = [];
+        const IMAGENS = ['image1.png', 'image2.png', 'image3.png', 'image4.png', 'image5.png', 'image6.png', 'image7.png'];
+        let imagensAtivas = [];
+        let imgIndice = 0;
+
+
+        function cadastro(nome, autor, ano) {
+            var livro = {
+                titulo: nome,
+                autor: autor,
+                ano: ano
+            };
+            biblioteca.push(livro);
+            atualizarQuantidadeLivros();
+
+            if (biblioteca.length <= IMAGENS.length) {
+                imagensAtivas.push(IMAGENS[biblioteca.length - 1]);
+                imgIndice = biblioteca.length - 1;
+                carregar();
+            }
+
+            document.querySelector('.carrossel').style.display = 'block';
+        }
+
+
+        function adicionar() {
+            let nome = document.getElementById('nomeLivro').value;
+            let autor = document.getElementById('autorLivro').value;
+            let ano = document.getElementById('anoLivro').value;
+            cadastro(nome, autor, ano);
+        }
+
+        function mostrarLivros() {
+            for (let x of biblioteca) {
+                console.log(x.titulo, x.autor, x.ano);
+            }
+        }
+
+        function apagarLivros() {
+            biblioteca.length = 0;
+            imagensAtivas.length = 0;
+            atualizarQuantidadeLivros();
+            document.querySelector('.carrossel').style.display = 'none';
+        }
+
+
+        function atualizarQuantidadeLivros() {
+            const quantidadeLivros = biblioteca.length;
+            const quantidadeLivrosText = quantidadeLivros === 1 ? '1 livro cadastrado' : `${quantidadeLivros} livros cadastrados`;
+            document.getElementById('quantidadeLivros').textContent = quantidadeLivrosText;
+
+            const textoCadastro = quantidadeLivros === 0 ? 'Cadastre um livro' : '';
+            document.getElementById('textoCadastro').textContent = textoCadastro;
+        }
+
+
+        function carregar(index = imgIndice) {
+            document.getElementById('carrosselImagem').src = imagensAtivas[index];
+            imgIndice = index;
+            document.getElementById('carrosselTexto').textContent = `Livro ${index + 1}`;
+        }
+
+
+        document.getElementById('anterior').addEventListener('click', () => {
+            if (imgIndice === 0) {
+                imgIndice = imagensAtivas.length - 1;
+            } else {
+                --imgIndice;
+            }
+            carregar();
+        });
+
+        document.getElementById('proximo').addEventListener('click', () => {
+            if (imgIndice === imagensAtivas.length - 1) {
+                imgIndice = 0;
+            } else {
+                ++imgIndice;
+            }
+            carregar();
+        });
+    </script>
+</body>
+
+</html>
